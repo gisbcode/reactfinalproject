@@ -61,7 +61,6 @@ export default function Weather() {
     return iconMap[iconCode] || "CLEAR_DAY";
   }
 
-
   function formatDay() {
     const now = new Date();
     const days = [
@@ -76,56 +75,52 @@ export default function Weather() {
     return days[now.getDay()];
   }
 
-
-
-
   if (weather.ready) {
-  return (
-    <div className="Weather">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="search"
-          value={city}
-          onChange={handleCityChange}
-          placeholder="Enter a city..."
-          autoFocus="on"
-          className="Weather-search-input"
-        />
-        <button type="submit" className="Weather-search-button">
-          Search
-        </button>
-      </form>
+    return (
+      <div className="Weather">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="search"
+            value={city}
+            onChange={handleCityChange}
+            placeholder="Enter a city..."
+            autoFocus="on"
+            className="Weather-search-input"
+          />
+          <button type="submit" className="Weather-search-button">
+            Search
+          </button>
+        </form>
 
-      <div className="Weather-main">
-        <div className="Weather-info">
-          <h1>{weather.city}</h1>
-          <p>{formatDay()}</p>
+        <div className="Weather-main">
+          <div className="Weather-info">
+            <h1>{weather.city}</h1>
 
-          <div className="Weather-details">
-            {formatDay()} — {weather.description}
-            <br />
-            Humidity: <strong>{weather.humidity}%</strong>, Wind:{" "}
-            <strong>{weather.wind} km/h</strong>
+            <div className="Weather-details">
+              {formatDay()} — {weather.description}
+              <br />
+              Humidity: <strong>{weather.humidity}%</strong>, Wind:{" "}
+              <strong>{weather.wind} km/h</strong>
+            </div>
+          </div>
+
+          <div className="Weather-temperature-container">
+            <ReactAnimatedWeather
+              icon={mapIcon(weather.icon)}
+              color="#885df1"
+              size={72}
+              animate={true}
+            />
+            <div className="Weather-temperature">{weather.temperature}</div>
+            <div className="Weather-unit">°C</div>
           </div>
         </div>
 
-        <div className="Weather-temperature-container">
-          <ReactAnimatedWeather
-            icon={mapIcon(weather.icon)}
-            color="#885df1"
-            size={72}
-            animate={true}
-          />
-          <div className="Weather-temperature">{weather.temperature}</div>
-          <div className="Weather-unit">°C</div>
-        </div>
+        <WeatherForecast coordinates={weather.coordinates} />
       </div>
+    );
+  }
 
-      <WeatherForecast coordinates={weather.coordinates} />
-    </div>
-  );
-}
-
-search();
-return <div className="Weather">Loading...</div>;
+  search();
+  return <div className="Weather">Loading...</div>;
 }

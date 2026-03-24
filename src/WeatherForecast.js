@@ -8,20 +8,26 @@ export default function WeatherForecast(props) {
 
   useEffect(() => {
     setLoaded(false);
-
-    if (!props.coordinates) return;
-
-    const apiKey = "22a8b6d46bced57bb018a83197efe51a";
-    const lat = props.coordinates.lat;
-    const lon = props.coordinates.lon;
-
-    const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-    axios.get(apiUrl).then(handleResponse);
   }, [props.coordinates]);
 
   function handleResponse(response) {
-    setForecast(response.data.list);
+    setForecast(response.data.daily);
     setLoaded(true);
+  }
+
+  function load() {
+    const apiKey = "22a8b6d46bced57bb018a83197efe51a";
+    const latitude = props.coordinates.lat;
+    const longitude = props.coordinates.lon;
+    const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+
+    axios.get(apiUrl).then(handleResponse);
+  }
+
+  function formatDay(timestamp) {
+    const date = new Date(timestamp * 1000);
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return days[date.getDay()];
   }
 
   function mapIcon(iconCode) {
@@ -49,40 +55,43 @@ export default function WeatherForecast(props) {
     return iconMap[iconCode] || "CLEAR_DAY";
   }
 
-  function formatDay(timestamp) {
-    const date = new Date(timestamp * 1000);
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    return days[date.getDay()];
+  if (!props.coordinates) {
+    return null;
   }
 
-  if (!props.coordinates) return null;
-  if (!loaded) return <div>Loading forecast...</div>;
+  if (loaded) {
+    return (
+      <div className="Forecast">
+        <div className="Forecast-title">5-day forecast</div>
+        <div className="row">
+          {forecast.slice(1, 6).map(function (day, index) {
+            return (
+              <div className="col" key={index}>
+                <div className="Forecast-day">{formatDay(day.dt)}</div>
 
-  const dailyForecast = forecast
-    .filter((item, index) => index % 8 === 0)
-    .slice(0, 5);
+                <ReactAnimatedWeather
+                  icon={mapIcon(day.weather[0].icon)}
+                  color="#885df1"
+                  size={36}
+                  animate={true}
+                />
 
-  return (
-    <div className="Forecast row">
-      {dailyForecast.map((day, index) => (
-        <div className="col" key={index}>
-          <div className="Forecast-day">{formatDay(day.dt)}</div>
-
-          <ReactAnimatedWeather
-            icon={mapIcon(day.weather[0].icon)}
-            size={40}
-            animate={true}
-          />
-          <div className="Forecast-temp">
-            <span className="Forecast-temp-max">
-              {Math.round(day.temp.max)}°
-            </span>
-            <span className="Forecast-temp-min">
-              {Math.round(day.temp.min)}°
-            </span>
-          </div>
+                <div className="Forecast-temp">
+                  <span className="Forecast-temp-max">
+                    {Math.round(day.temp.max)}°
+                  </span>
+                  <span className="Forecast-temp-min">
+                    {Math.round(day.temp.min)}°
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      ))}
-    </div>
-  );
+      </div>
+    );
+  } else {
+    load();
+    return null;
+  }
 }
