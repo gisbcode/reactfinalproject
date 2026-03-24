@@ -17,9 +17,10 @@ export default function WeatherForecast(props) {
 
   function load() {
     const apiKey = "22a8b6d46bced57bb018a83197efe51a";
-    const latitude = props.coordinates.lat;
-    const longitude = props.coordinates.lon;
-    const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+    const lat = props.coordinates.lat;
+    const lon = props.coordinates.lon;
+
+    const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
     axios.get(apiUrl).then(handleResponse);
   }
@@ -55,16 +56,15 @@ export default function WeatherForecast(props) {
     return iconMap[iconCode] || "CLEAR_DAY";
   }
 
-  if (!props.coordinates) {
-    return null;
-  }
+  if (!props.coordinates) return null;
 
   if (loaded) {
     return (
       <div className="Forecast">
-        <div className="Forecast-title">5-day forecast</div>
+        <div className="Forecast-title">Today</div>
+
         <div className="row">
-          {forecast.slice(1, 6).map(function (day, index) {
+          {forecast.slice(0, 1).map(function (day, index) {
             return (
               <div className="col" key={index}>
                 <div className="Forecast-day">{formatDay(day.dt)}</div>
@@ -72,7 +72,7 @@ export default function WeatherForecast(props) {
                 <ReactAnimatedWeather
                   icon={mapIcon(day.weather[0].icon)}
                   color="#885df1"
-                  size={36}
+                  size={40}
                   animate={true}
                 />
 
