@@ -20,7 +20,7 @@ function App() {
           </a>{" "}
           and is open-sourced on{" "}
           <a
-            href="https://github.com/gisbcode/reactfinalapp"
+            href="https://github.com/gisbcode/reactfinalproject"
             target="_blank"
             rel="noreferrer"
           >
